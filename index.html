@@ -18,10 +18,19 @@
         </div>
         <script type="text/babel">
             const App = () => {
-                return <p>Всем привет, я компонент App</p>
+                return (
+                    <React.Fragment>
+                        <p>Всем привет, я компонент App</p>
+                        <News />
+                        <Comments />
+                    </React.Fragment>
+                )
             }
             const News = () => {
                 return <p>К сожалению новостей нет</p>
+            }
+            const Comments = () => {
+                return <p>Нет новостей - комментировать нечего</p>
             }
             class BigApp extends React.Component {
                 render() {
@@ -36,7 +45,7 @@
                 }
             }
             ReactDOM.render(
-                <BigApp />,
+                <App />,
                 document.getElementById('root')
             );
         </script>
