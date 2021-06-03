@@ -6,6 +6,7 @@
         <script src="react.development.js"></script>
         <script src="react-dom.development.js"></script>
         <script src="babel.min.js"></script>
+        <script src="prop-types.js"></script>
         <style>
             .none {
                 display: none;
@@ -42,36 +43,64 @@
                 {
                     id: 1,
                     author: 'Саша Печкин',
-                    text: 'В четверг, четвёртого числа...'
+                    text: 'В четверг, четвёртого числа...',
+                    bigText: 'в четыре с четвертью часа четыре чёрненьких чумазеньких чертёнка\
+                    чертили чёрными чернилами чертёж.'
                 },
                 {
                     id: 2,
                     author: 'Просто Вася',
-                    text: 'Считаю, что $ должен стоить 35 рублей!'
+                    text: 'Считаю, что $ должен стоить 35 рублей!',
+                    bigText: 'А евро 42!'
                 },
                 {
                     id: 3,
                     author: 'Max Frontend',
-                    text: 'Прошло 2 года с прошлых учебников, а $ так и не стоит 35'
+                    text: 'Прошло 2 года с прошлых учебников, а $ так и не стоит 35',
+                    bigText: 'А евро опять выше 70.'
                 },
                 {
                     id: 4,
                     author: 'Гость',
-                    text: 'Бесплатно. Без смс, про реакт, заходи - https://maxpfrontend.ru'
+                    text: 'Бесплатно. Без смс, про реакт, заходи - https://maxpfrontend.ru',
+                    bigText: 'Еще есть группа VK, telegram и канал на youtube! Вся инфа на сайте,\
+                    не реклама!'
                 }
             ];
             class Article extends React.Component {
+                state = {
+                    visible: false
+                }
+                handleReadMoreClick = (e) => {
+                    e.preventDefault()
+                    this.setState({ visible: true })
+                }
                 render() {
-                    const {author, text} = this.props.data
+                    const { author, text, bigText } = this.props.data
+                    const { visible } = this.state
+                    console.log('render', this)
                     return(
                         <div className='article'>
                             <p className='newsAuthor'>{author}:</p>
                             <p className='newsText'>{text}:</p>
+                            {
+                                !visible && <a onClick={this.handleReadMoreClick}
+                                href='#' className='newsReadmore'>Подробнее</a>
+                            }
+                            {
+                                visible && <p className='newsBigText'>{bigText}:</p>
+                            }
                         </div>
                     )
                 }
             }
             class News extends React.Component {
+                state = {
+                    counter: 0
+                }
+                handleCounter = () => {
+                    this.setState({ counter: ++this.state.counter })
+                }
                 renderNews = () => {
                     const { data } = this.props // или const data = this.props.data
                     let newsTemplate = null
@@ -88,13 +117,26 @@
                 }
                 render() {
                     const { data } = this.props
+                    const { counter } = this.state
                     return (
                         <div className='news'>
                             {this.renderNews()}
-                            {data.length ? <strong className='newsCount'>Всего новостей: {data.length}</strong> : null}
+                            {data.length ? <strong onClick={this.handleCounter}
+                            className='newsCount'>Всего новостей: {data.length}</strong> : null}
+                            <p>Всего кликов: { counter }</p>
                         </div>
                     )
                 }
+            }
+            News.propTypes = {
+                data: PropTypes.array.isRequired
+            }
+            Article.propTypes = {
+                data: PropTypes.shape({
+                    author: PropTypes.string.isRequired,
+                    text: PropTypes.string.isRequired,
+                    bigText: PropTypes.string.isRequired
+                })
             }
             const App = () => {
                 return (
