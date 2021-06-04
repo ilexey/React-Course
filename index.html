@@ -34,6 +34,9 @@
                 margin: 10px 0 0 0;
                 display: block;
             }
+            .testInput {
+                margin: 0 5px 5px 0;
+            }
         </style>
 	</head>
 	<body>
@@ -67,6 +70,26 @@
                     не реклама!'
                 }
             ];
+            class TestInput extends React.Component {
+                constructor(props) {
+                    super(props)
+                    this.input = React.createRef()
+                }
+                onBtnClickHandler = () => {
+                    alert(this.input.current.value)
+                }
+                render() {
+                    return (
+                        <React.Fragment>
+                            <input className='testInput' defaultValue=''
+                            placeholder='Введите значение' ref={this.input}/>
+                            <button className='button' onClick={this.onBtnClickHandler}>
+                                Нажмите
+                            </button>
+                        </React.Fragment>
+                    )
+                }
+            }
             class Article extends React.Component {
                 state = {
                     visible: false
@@ -95,12 +118,6 @@
                 }
             }
             class News extends React.Component {
-                state = {
-                    counter: 0
-                }
-                handleCounter = () => {
-                    this.setState({ counter: ++this.state.counter })
-                }
                 renderNews = () => {
                     const { data } = this.props // или const data = this.props.data
                     let newsTemplate = null
@@ -117,13 +134,10 @@
                 }
                 render() {
                     const { data } = this.props
-                    const { counter } = this.state
                     return (
                         <div className='news'>
                             {this.renderNews()}
-                            {data.length ? <strong onClick={this.handleCounter}
-                            className='newsCount'>Всего новостей: {data.length}</strong> : null}
-                            <p>Всего кликов: { counter }</p>
+                            <strong className='newsCount'>Всего новостей: {data.length}</strong>
                         </div>
                     )
                 }
@@ -142,6 +156,7 @@
                 return (
                     <React.Fragment>
                         <h3>Новости</h3>
+                        <TestInput />
                         <News data={myNews}/> {/*добавили свойство data*/}
                     </React.Fragment>
                 )
