@@ -8,6 +8,9 @@
         <script src="babel.min.js"></script>
         <script src="prop-types.js"></script>
         <style>
+            .red {
+                color: red
+            }
             .none {
                 display: none;
             }
@@ -70,56 +73,31 @@
                     не реклама!'
                 }
             ];
-            class TestInput extends React.Component {
-                constructor(props) {
-                    super(props)
-                    this.input = React.createRef()
-                }
-                onBtnClickHandler = () => {
-                    alert(this.input.current.value)
-                }
-                render() {
-                    return (
-                        <React.Fragment>
-                            <input className='testInput' defaultValue=''
-                            placeholder='Введите значение' ref={this.input}/>
-                            <button className='button' onClick={this.onBtnClickHandler}>
-                                Нажмите
-                            </button>
-                        </React.Fragment>
-                    )
-                }
+
+            const App = () => {
+                return (
+                    <React.Fragment>
+                        <h3>Новости</h3>
+                        <News data={myNews}/>
+                    </React.Fragment>
+                )
             }
+
             class Article extends React.Component {
-                state = {
-                    visible: false
-                }
-                handleReadMoreClick = (e) => {
-                    e.preventDefault()
-                    this.setState({ visible: true })
-                }
                 render() {
-                    const { author, text, bigText } = this.props.data
-                    const { visible } = this.state
-                    console.log('render', this)
-                    return(
-                        <div className='article'>
-                            <p className='newsAuthor'>{author}:</p>
-                            <p className='newsText'>{text}:</p>
-                            {
-                                !visible && <a onClick={this.handleReadMoreClick}
-                                href='#' className='newsReadmore'>Подробнее</a>
-                            }
-                            {
-                                visible && <p className='newsBigText'>{bigText}:</p>
-                            }
+                    const {author, text} = this.props.data
+                    return (
+                        <div className="article">
+                            <p className="newsAuthor">{author}:</p>
+                            <p className="newsText">{text}</p>
                         </div>
                     )
                 }
             }
+
             class News extends React.Component {
                 renderNews = () => {
-                    const { data } = this.props // или const data = this.props.data
+                    const {data} = this.props
                     let newsTemplate = null
                     if (data.length) {
                         newsTemplate = data.map(function(item) {
@@ -133,38 +111,34 @@
                     return newsTemplate
                 }
                 render() {
-                    const { data } = this.props
+                    const {data} = this.props
                     return (
-                        <div className='news'>
+                        <div className="news">
                             {this.renderNews()}
-                            <strong className='newsCount'>Всего новостей: {data.length}</strong>
+                            {
+                                data.length ? <strong>Всего новостей: {data.length}</strong> : null
+                            }
                         </div>
                     )
                 }
             }
+
             News.propTypes = {
                 data: PropTypes.array.isRequired
             }
+
             Article.propTypes = {
                 data: PropTypes.shape({
                     author: PropTypes.string.isRequired,
-                    text: PropTypes.string.isRequired,
-                    bigText: PropTypes.string.isRequired
+                    text: PropTypes.string.isRequired
                 })
             }
-            const App = () => {
-                return (
-                    <React.Fragment>
-                        <h3>Новости</h3>
-                        <TestInput />
-                        <News data={myNews}/> {/*добавили свойство data*/}
-                    </React.Fragment>
-                )
-            }
+
             ReactDOM.render(
                 <App />,
                 document.getElementById('root')
-            );
+            )
+            
         </script>
 	</body>
 </html>
