@@ -78,18 +78,57 @@
                 return (
                     <React.Fragment>
                         <h3>Новости</h3>
+                        <TestInput />
                         <News data={myNews}/>
                     </React.Fragment>
                 )
             }
 
-            class Article extends React.Component {
+            class TestInput extends React.Component {
+                constructor(props) {
+                    super(props)
+                    this.input = React.createRef()
+                }
+                onBtnClickHandler = () => {
+                    alert(this.input.current.value)
+                }
+                onBtnClearHandler = () => {
+                    this.input.current.value = ""
+                }
                 render() {
-                    const {author, text} = this.props.data
+                    console.log(this)
+                    return (
+                        <React.Fragment>
+                            <input className="testInput" defaultValue=""
+                            placeholder="Введите значение" ref={this.input}/>
+                            <button onClick={this.onBtnClickHandler}>Показать alert</button>
+                            <button onClick={this.onBtnClearHandler}>X</button>
+                        </React.Fragment>
+                    )
+                }
+            }
+
+            class Article extends React.Component {
+                state = {
+                    visible: false
+                }
+                handleReadmoreClick = (e) => {
+                    e.preventDefault()
+                    this.setState({visible: true})
+                }
+                render() {
+                    const {author, text, bigText} = this.props.data
+                    const {visible} = this.state
+                    console.log('render', this)
                     return (
                         <div className="article">
                             <p className="newsAuthor">{author}:</p>
                             <p className="newsText">{text}</p>
+                            {
+                                !visible ? <a onClick={this.handleReadmoreClick}
+                                href="#" className="newsReadmore">Подробнее</a> :
+                                <p className="newsBigText">{bigText}</p>
+                            }
                         </div>
                     )
                 }
@@ -130,7 +169,8 @@
             Article.propTypes = {
                 data: PropTypes.shape({
                     author: PropTypes.string.isRequired,
-                    text: PropTypes.string.isRequired
+                    text: PropTypes.string.isRequired,
+                    bigText: PropTypes.string.isRequired
                 })
             }
 
