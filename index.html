@@ -40,6 +40,33 @@
             .testInput {
                 margin: 0 5px 5px 0;
             }
+            .add {
+                margin: 0 5px 5px 0;
+                width: 210px;
+                border: 1px dashed rgba(0, 89, 181, 0.82);
+                padding: 5px;
+            }
+            .addAuthor, .addText, .addBtn, .addCheckrule {
+                display: block;
+                margin: 0 0 5px 0;
+                padding: 5px;
+                width: 94%;
+                border: 1px solid rgba(0, 89, 181, 0.82);
+            }
+            .addCheckrule {
+                border: none;
+                font-size: 12px;
+            }
+            .addBtn {
+                box-sizing: content-box;
+                color: #FFF;
+                text-transform: uppercase;
+                background: #007DDC;
+            }
+            .addBtn:disabled {
+                background: #CCC;
+                color: #999;
+            }
         </style>
 	</head>
 	<body>
@@ -78,32 +105,54 @@
                 return (
                     <React.Fragment>
                         <h3>Новости</h3>
-                        <TestInput />
+                        <Add />
                         <News data={myNews}/>
                     </React.Fragment>
                 )
             }
 
-            class TestInput extends React.Component {
-                constructor(props) {
-                    super(props)
-                    this.input = React.createRef()
+            class Add extends React.Component {
+                state = {
+                    name: "",
+                    text: "",
+                    agree: false
                 }
-                onBtnClickHandler = () => {
-                    alert(this.input.current.value)
+                onBtnClickHandler = (e) => {
+                    e.preventDefault()
+                    alert(this.state.name + "\n" + this.state.text)
                 }
-                onBtnClearHandler = () => {
-                    this.input.current.value = ""
+                handleChange = (e) => {
+                    const {id, value} = e.currentTarget
+                    this.setState({[id]: e.currentTarget.value})
+                }
+                handleCheckboxChange = (e) => {
+                    this.setState({agree: e.currentTarget.checked})
+                }
+                validate = () => {
+                    const {name, text, agree} = this.state
+                    if (name.trim() && text.trim() && agree) {
+                        return true
+                    }
+                    return false
                 }
                 render() {
-                    console.log(this)
+                    const {name, text, agree} = this.state
                     return (
-                        <React.Fragment>
-                            <input className="testInput" defaultValue=""
-                            placeholder="Введите значение" ref={this.input}/>
-                            <button onClick={this.onBtnClickHandler}>Показать alert</button>
-                            <button onClick={this.onBtnClearHandler}>X</button>
-                        </React.Fragment>
+                        <form className="add">
+                            <input id="name" type="text" onChange={this.handleChange}
+                            className="addAuthor" placeholder="Введите имя"
+                            value={name}/>
+                            <textarea id="text" onChange={this.handleChange} className="addText"
+                            placeholder="Текст новости" value={text}></textarea>
+                            <label className="addCheckrule">
+                                <input type="checkbox" onChange={this.handleCheckboxChange}/>
+                                Я согласен с правилами
+                            </label>
+                            <button className="addBtn" onClick={this.onBtnClickHandler}
+                            disabled={!this.validate()}>
+                                Показать alert
+                            </button>
+                        </form>
                     )
                 }
             }
