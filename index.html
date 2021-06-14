@@ -101,25 +101,36 @@
                 }
             ];
 
-            const App = () => {
-                return (
-                    <React.Fragment>
-                        <h3>Новости</h3>
-                        <Add />
-                        <News data={myNews}/>
-                    </React.Fragment>
-                )
+            class App extends React.Component {
+                state = {
+                    news: myNews,
+                }
+                handleAddNews = (data) => {
+                    const nextNews = [data, ...this.state.news]
+                    this.setState({news: nextNews})
+                }
+                render() {
+                    return (
+                        <React.Fragment>
+                            <Add onAddNews={this.handleAddNews}/>
+                            <h3>Новости</h3>
+                            <News data={this.state.news}/>
+                        </React.Fragment>
+                    )
+                }
             }
 
             class Add extends React.Component {
                 state = {
                     name: "",
                     text: "",
-                    agree: false
+                    bigText: "",
+                    agree: false,
                 }
                 onBtnClickHandler = (e) => {
                     e.preventDefault()
-                    alert(this.state.name + "\n" + this.state.text)
+                    const {name, text, bigText} = this.state
+                    this.props.onAddNews({id: +new Date(), author: name, text,  bigText})
                 }
                 handleChange = (e) => {
                     const {id, value} = e.currentTarget
@@ -129,14 +140,14 @@
                     this.setState({agree: e.currentTarget.checked})
                 }
                 validate = () => {
-                    const {name, text, agree} = this.state
-                    if (name.trim() && text.trim() && agree) {
+                    const {name, text, bigText, agree} = this.state
+                    if (name.trim() && text.trim() && bigText.trim() && agree) {
                         return true
                     }
                     return false
                 }
                 render() {
-                    const {name, text, agree} = this.state
+                    const {name, text, bigText, agree} = this.state
                     return (
                         <form className="add">
                             <input id="name" type="text" onChange={this.handleChange}
@@ -144,13 +155,15 @@
                             value={name}/>
                             <textarea id="text" onChange={this.handleChange} className="addText"
                             placeholder="Текст новости" value={text}></textarea>
+                            <textarea id="bigText" onChange={this.handleChange} className="addText"
+                            placeholder="Текст новости подробно" value={bigText}></textarea>
                             <label className="addCheckrule">
                                 <input type="checkbox" onChange={this.handleCheckboxChange}/>
                                 Я согласен с правилами
                             </label>
                             <button className="addBtn" onClick={this.onBtnClickHandler}
                             disabled={!this.validate()}>
-                                Показать alert
+                                Добавить новость
                             </button>
                         </form>
                     )
@@ -168,7 +181,6 @@
                 render() {
                     const {author, text, bigText} = this.props.data
                     const {visible} = this.state
-                    console.log('render', this)
                     return (
                         <div className="article">
                             <p className="newsAuthor">{author}:</p>
@@ -204,11 +216,15 @@
                         <div className="news">
                             {this.renderNews()}
                             {
-                                data.length ? <strong>Всего новостей: {data.length}</strong> : null
+                                data.length ? <strong className={'newsCount'}>Всего новостей: {data.length}</strong> : null
                             }
                         </div>
                     )
                 }
+            }
+
+            Add.propTypes = {
+                onAddNews: PropTypes.func.isRequired,
             }
 
             News.propTypes = {
@@ -217,6 +233,7 @@
 
             Article.propTypes = {
                 data: PropTypes.shape({
+                    id: PropTypes.number.isRequired,
                     author: PropTypes.string.isRequired,
                     text: PropTypes.string.isRequired,
                     bigText: PropTypes.string.isRequired
